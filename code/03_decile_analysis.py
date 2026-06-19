@@ -184,13 +184,19 @@ def main() -> None:
 
     # -----------------------------------------------------------------------
     # 2x2 Factorial: |R| stratum x sign(R) -> eGene rate
+    # High |R| stratum = above median |R| (top 50% of all genes by |R|)
+    # Low  |R| stratum = at-or-below median |R| (bottom 50%)
+    # This definition reproduces: High|R|×R>0: 50.6%, High|R|×R<0: 51.6%, p=0.571
     # -----------------------------------------------------------------------
     print("\n" + "=" * 60)
     print("2x2 Factorial: |R| stratum x sign(R) -> eGene rate")
+    print("(High|R| = above median |R|; Low|R| = at-or-below median |R|)")
     print("=" * 60)
 
-    high_absR = df[df["absR_decile"] == 9]
-    low_absR  = df[df["absR_decile"] == 0]
+    absR_median = df["abs_R"].median()
+    print(f"  Median |R| = {absR_median:.4f}")
+    high_absR = df[df["abs_R"] > absR_median]
+    low_absR  = df[df["abs_R"] <= absR_median]
 
     cells = [
         ("High|R|, R>0", high_absR[high_absR["PearsonR"] > 0]),

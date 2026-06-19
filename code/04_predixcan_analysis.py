@@ -117,14 +117,19 @@ def main() -> None:
     # Section 1: 2x2 Factorial — |R| stratum x sign(R) -> eGene rate
     # -----------------------------------------------------------------------
     print_section("1. 2x2 Factorial: |R| stratum x sign(R) -> eGene rate")
-    print("(Tests whether prediction direction predicts eGene status after |R| fixed)")
+    print("(High|R| = above median |R|; Low|R| = at-or-below median |R|)")
+    print("(This definition reproduces manuscript Table: 50.6% vs 51.6%, p=0.571)")
 
-    # Use top (D10) and bottom (D1) |R| deciles as the two |R| strata
-    high_absR = df[df["absR_decile"] == 9]   # top |R| decile
-    low_absR  = df[df["absR_decile"] == 0]   # bottom |R| decile
+    # High |R| = above median |R| (top 50%)
+    # Low  |R| = at-or-below median |R| (bottom 50%)
+    absR_median = df["abs_R"].median()
+    print(f"  Median |R| = {absR_median:.4f}")
+    high_absR = df[df["abs_R"] > absR_median]
+    low_absR  = df[df["abs_R"] <= absR_median]
 
     factorial_rows = []
-    for stratum_label, sub_stratum in [("High|R| (D10)", high_absR), ("Low|R| (D1)", low_absR)]:
+    for stratum_label, sub_stratum in [("High|R| (above median)", high_absR),
+                                        ("Low|R|  (at/below median)", low_absR)]:
         for sign_label, sub_sign in [("R>0", sub_stratum[sub_stratum["PearsonR"] > 0]),
                                       ("R<0", sub_stratum[sub_stratum["PearsonR"] < 0])]:
             n_total = len(sub_sign)
@@ -163,7 +168,8 @@ def main() -> None:
     factorial_df = pd.DataFrame(factorial_rows)
     factorial_df["chi2_within_stratum"] = np.nan
     factorial_df["chi2_pval_within_stratum"] = np.nan
-    for stratum, chi2, pval in [("High|R| (D10)", chi2_hi, p_hi), ("Low|R| (D1)", chi2_lo, p_lo)]:
+    for stratum, chi2, pval in [("High|R| (above median)", chi2_hi, p_hi),
+                                ("Low|R|  (at/below median)", chi2_lo, p_lo)]:
         mask = factorial_df["stratum"] == stratum
         factorial_df.loc[mask, "chi2_within_stratum"] = chi2
         factorial_df.loc[mask, "chi2_pval_within_stratum"] = pval
