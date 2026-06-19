@@ -10,7 +10,7 @@ I am submitting for consideration the manuscript titled **"Enformer Recognizes c
 
 **What this study finds.** Enformer's prediction magnitude (|R|) is a strong, monotone predictor of cis-eQTL gene identity (eGene rate rises from 31.6% in the lowest |R| decile to 82.5% in the highest; logistic |R| model AIC = 8,274, outperforming the R+R² model by 104 AIC units). However, the *direction* of Enformer's individual-level predictions for eGenes is near-random (54.0% correct; binomial p = 0.017 against 50%; maximum D10 = 62.5%). A 2×2 factorial analysis confirms that within any |R| stratum, genes with R > 0 and R < 0 have statistically identical eGene rates (50.6% vs. 51.6%; χ² p = 0.571). The direction error is irreversible: R < 0 eGenes retain negative fine-tuned correlations after ROSMAP fine-tuning (mean FinetuneR = −0.035 vs. +0.063; Mann–Whitney p ≈ 10⁻¹⁰⁰). In contrast, PrediXcan correctly assigns positive R to R < 0 eGenes (PrediXcanR = 0.295), confirming that the directional information is accessible from genotype data but inaccessible to Enformer.
 
-**Why this is novel.** This is, to our knowledge, the first characterization of a magnitude–direction dissociation in any sequence-to-expression model evaluated at individual resolution. The finding has immediate practical implications: Enformer can identify which genes are cis-regulated (via |R|), but cannot be used to infer the sign of individual genetic effects on brain expression. The PrediXcan contrast provides a mechanistic anchor: the failure is specific to sequence-based prediction and is best explained by Enformer's ENCODE cell-line training corpus, which lacks the brain-specific regulatory programs needed to correctly orient effects in DLPFC neurons.
+**Why this is novel.** This is, to our knowledge, the first characterization of a magnitude–direction dissociation in any sequence-to-expression model evaluated at individual resolution. The finding has immediate practical implications: Enformer can identify which genes are cis-regulated (via |R|), but cannot be used to infer the sign of individual genetic effects on brain expression. The PrediXcan contrast provides a mechanistic anchor: the failure is specific to sequence-based prediction and is most parsimoniously explained by the hypothesis that Enformer's ENCODE cell-line training corpus lacks the brain-specific regulatory programs needed to correctly orient effects in DLPFC neurons (a causal mechanism that would require purpose-trained model variants to confirm).
 
 **Reproducibility.** All analysis code (Python 3, scipy, statsmodels, matplotlib) and processed gene-level tables are available on GitHub and archived on Zenodo. The results can be reproduced entirely from publicly available data without controlled-access approval.
 
@@ -23,7 +23,7 @@ Sincerely,
 **DongKoo Lee**  
 Independent Researcher  
 Gwangju-si, Gyeonggi-do, Republic of Korea  
-ORCID: [to be assigned]  
+ORCID: 0009-0006-4538-1101  
 ceo@nrootm.com
 
 ---

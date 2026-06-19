@@ -12,7 +12,7 @@ Work through these steps in order. Each step's output feeds into the next.
 
 - [ ] **ORCID** — Go to [orcid.org/register](https://orcid.org/register) and create a free account. Obtain your 16-digit ORCID iD (format: `0000-0000-0000-0000`). Add your affiliation ("Independent Researcher, Gwangju-si, Republic of Korea") and email (ceo@nrootm.com) to your ORCID profile.
 
-- [ ] **Fill ORCID placeholder** — Replace `[ORCID-to-be-assigned]` and `[ORCID]` in all files:
+- [ ] **Fill ORCID placeholder** — Replace `[ORCID-to-be-assigned]` and `0009-0006-4538-1101` in all files:
   - `CITATION.cff` (field: `orcid`)
   - `.zenodo.json` (field: `creators[0].orcid`)
   - `docs/cover_letter.md` (signature block)
@@ -121,7 +121,7 @@ Send only after the bioRxiv DOI is live and confirmed accessible.
 
 ## Phase 6: Journal submission
 
-- [ ] **Final manuscript check** — Confirm all placeholders (`https://github.com/Dong-Koo/enformer-magnitude-direction`, `10.5281/zenodo.20754856`, `[bioRxiv DOI]`, `[ORCID]`) are replaced in the PDF. Confirm figure files are embedded.
+- [ ] **Final manuscript check** — Confirm all placeholders (`https://github.com/Dong-Koo/enformer-magnitude-direction`, `10.5281/zenodo.20754856`, `[bioRxiv DOI]`, `0009-0006-4538-1101`) are replaced in the PDF. Confirm figure files are embedded.
 
 - [ ] **Bioinformatics Advances** (1st choice, Oxford Academic)
   - Submission portal: [academic.oup.com/bioinformaticsadvances/pages/submission-guidelines](https://academic.oup.com/bioinformaticsadvances/pages/submission-guidelines)
@@ -146,7 +146,7 @@ See `docs/cover_letter.md` for full rationale, reviewer suggestions, and reviewe
 
 | Placeholder | Replace with | Files |
 |-------------|-------------|-------|
-| `[ORCID-to-be-assigned]` / `[ORCID]` | Your 16-digit ORCID iD | CITATION.cff, .zenodo.json, cover_letter.md, researcher_email.md, manuscript.html |
+| `[ORCID-to-be-assigned]` / `0009-0006-4538-1101` | Your 16-digit ORCID iD | CITATION.cff, .zenodo.json, cover_letter.md, researcher_email.md, manuscript.html |
 | `[username]` / `https://github.com/Dong-Koo/enformer-magnitude-direction` | Your GitHub repo URL | README.md, CITATION.cff, DATA_AVAILABILITY.md, researcher_email.md, manuscript.html |
 | `10.5281/zenodo.20754856` | `10.5281/10.5281/zenodo.20754856` | README.md, DATA_AVAILABILITY.md, cover_letter.md, researcher_email.md, manuscript.html |
 | `[bioRxiv DOI]` | `10.1101/XXXXXXXX` | README.md, CITATION.cff, cover_letter.md, researcher_email.md, manuscript.html |

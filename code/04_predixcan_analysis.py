@@ -1,17 +1,29 @@
 """
 04_predixcan_analysis.py
 ------------------------
-Compare PrediXcan R and expression statistics between Class A (D10 eGenes)
-and Class B (D1 eGenes), and fit a covariate-adjusted OLS model.
+Factorial analysis of |R| stratum x sign(R) for eGenes vs. non-eGenes, and
+PrediXcan R comparison across four gene categories.
+
+Design:
+  - Primary 2x2 factorial: {high|R|, low|R|} x {R>0, R<0} for ALL genes
+    Tests whether R sign predicts eGene status after |R| is held constant.
+  - PrediXcan R across 4 categories (manuscript Figure 2B):
+      (1) Non-eGene, low |R|
+      (2) Non-eGene, high |R|
+      (3) eGene, R < 0  (Enformer wrong direction)
+      (4) eGene, R > 0  (Enformer correct direction)
+  - Fine-tuning stability: FinetuneR by base R sign (eGenes only, Figure 2A)
 
 Inputs:
-  data/processed/gene_level_results.csv   (must already contain 'decile' column
-                                           written by 03_decile_analysis.py)
+  data/processed/gene_level_results.csv  (must contain abs_R, absR_decile
+                                          columns written by 03_decile_analysis.py)
 
 Outputs:
-  data/processed/classA_D10_eGenes.csv
-  data/processed/classB_D1_eGenes.csv
-  (prints all statistical results to stdout)
+  data/processed/factorial_direction_analysis.csv
+  data/processed/high_absR_Rpos_egenes.csv
+  data/processed/high_absR_Rneg_egenes.csv
+  data/processed/low_absR_Rpos_egenes.csv
+  data/processed/low_absR_Rneg_egenes.csv
 """
 
 import os
@@ -19,7 +31,6 @@ import os
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
-import statsmodels.formula.api as smf
 from scipy import stats
 
 # ---------------------------------------------------------------------------
@@ -30,8 +41,11 @@ PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
 PROC_DIR = os.path.join(PROJECT_ROOT, "data", "processed")
 
 INPUT_FILE = os.path.join(PROC_DIR, "gene_level_results.csv")
-CLASSA_OUT = os.path.join(PROC_DIR, "classA_D10_eGenes.csv")
-CLASSB_OUT = os.path.join(PROC_DIR, "classB_D1_eGenes.csv")
+FACTORIAL_OUT = os.path.join(PROC_DIR, "factorial_direction_analysis.csv")
+HI_POS_OUT = os.path.join(PROC_DIR, "high_absR_Rpos_egenes.csv")
+HI_NEG_OUT = os.path.join(PROC_DIR, "high_absR_Rneg_egenes.csv")
+LO_POS_OUT = os.path.join(PROC_DIR, "low_absR_Rpos_egenes.csv")
+LO_NEG_OUT = os.path.join(PROC_DIR, "low_absR_Rneg_egenes.csv")
 
 N_DECILES = 10
 
@@ -58,7 +72,6 @@ def print_section(title: str) -> None:
 
 
 def summarize(label: str, arr: np.ndarray) -> None:
-    """Print mean ± SD, median [IQR] for an array."""
     if len(arr) == 0:
         print(f"  {label}: no data")
         return
@@ -68,150 +81,224 @@ def summarize(label: str, arr: np.ndarray) -> None:
     print(f"    median={np.median(arr):.4f}, IQR=[{q25:.4f}, {q75:.4f}]")
 
 
-def mw_test(a: np.ndarray, b: np.ndarray, label: str) -> None:
-    """Mann-Whitney U test between arrays a and b."""
+def mw_test(a: np.ndarray, b: np.ndarray, label: str) -> float:
     if len(a) < 2 or len(b) < 2:
-        print(f"  {label}: insufficient data for test")
-        return
+        print(f"  {label}: insufficient data")
+        return np.nan
     stat, pval = stats.mannwhitneyu(a, b, alternative="two-sided")
-    # Effect size: rank-biserial correlation
     n1, n2 = len(a), len(b)
     r_rb = 1 - (2 * stat) / (n1 * n2)
     print(f"  {label}: U={stat:.1f}, p={pval:.3e}, r_rb={r_rb:.3f}")
-
-
-def cohend(a: np.ndarray, b: np.ndarray) -> float:
-    """Cohen's d effect size."""
-    pooled_sd = np.sqrt((np.std(a, ddof=1) ** 2 + np.std(b, ddof=1) ** 2) / 2)
-    if pooled_sd == 0:
-        return np.nan
-    return (np.mean(a) - np.mean(b)) / pooled_sd
+    return pval
 
 
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 def main() -> None:
-    print_section("04_predixcan_analysis.py  —  Class A vs Class B eGene Analysis")
+    print_section("04_predixcan_analysis.py  --  Factorial Direction Analysis")
 
     df = pd.read_csv(INPUT_FILE)
-    print(f"Loaded {len(df)} genes, {df['is_egene'].sum()} eGenes")
+    print(f"Loaded {len(df)} genes, {int(df['is_egene'].sum())} eGenes")
 
-    # Ensure decile column is present
-    if "decile" not in df.columns:
-        print("  'decile' column missing — computing now ...")
-        df = df.dropna(subset=["PearsonR"]).reset_index(drop=True)
-        df["decile"] = assign_deciles(df["PearsonR"], n=N_DECILES)
-    else:
-        df = df.dropna(subset=["PearsonR"]).reset_index(drop=True)
+    df = df.dropna(subset=["PearsonR"]).reset_index(drop=True)
 
-    # -----------------------------------------------------------------------
-    # Define classes
-    # -----------------------------------------------------------------------
-    class_a = df[(df["decile"] == 9) & (df["is_egene"] == 1)].copy()  # D10
-    class_b = df[(df["decile"] == 0) & (df["is_egene"] == 1)].copy()  # D1
-
-    print(f"\n  Class A (D10 eGenes): n={len(class_a)}")
-    print(f"  Class B (D1  eGenes): n={len(class_b)}")
+    # Ensure abs_R and absR_decile are present (computed by 03_decile_analysis.py)
+    if "abs_R" not in df.columns:
+        print("  abs_R missing -- computing from PearsonR ...")
+        df["abs_R"] = df["PearsonR"].abs()
+    if "absR_decile" not in df.columns:
+        print("  absR_decile missing -- computing from |PearsonR| ...")
+        df["absR_decile"] = assign_deciles(df["abs_R"], n=N_DECILES)
+    if "R_positive" not in df.columns:
+        df["R_positive"] = (df["PearsonR"] > 0).astype(int)
 
     # -----------------------------------------------------------------------
-    # 1. PrediXcan R comparison
+    # Section 1: 2x2 Factorial — |R| stratum x sign(R) -> eGene rate
     # -----------------------------------------------------------------------
-    print_section("1. PrediXcan R Comparison")
+    print_section("1. 2x2 Factorial: |R| stratum x sign(R) -> eGene rate")
+    print("(Tests whether prediction direction predicts eGene status after |R| fixed)")
 
-    a_pred = class_a["PrediXcanR"].dropna().values
-    b_pred = class_b["PrediXcanR"].dropna().values
+    # Use top (D10) and bottom (D1) |R| deciles as the two |R| strata
+    high_absR = df[df["absR_decile"] == 9]   # top |R| decile
+    low_absR  = df[df["absR_decile"] == 0]   # bottom |R| decile
 
-    summarize("Class A PrediXcanR", a_pred)
-    summarize("Class B PrediXcanR", b_pred)
-    if len(a_pred) > 0 and len(b_pred) > 0:
-        mw_test(a_pred, b_pred, "Class A vs B PrediXcanR")
-        d = cohend(a_pred, b_pred)
-        print(f"  Cohen's d (A - B): {d:.3f}")
+    factorial_rows = []
+    for stratum_label, sub_stratum in [("High|R| (D10)", high_absR), ("Low|R| (D1)", low_absR)]:
+        for sign_label, sub_sign in [("R>0", sub_stratum[sub_stratum["PearsonR"] > 0]),
+                                      ("R<0", sub_stratum[sub_stratum["PearsonR"] < 0])]:
+            n_total = len(sub_sign)
+            n_egene = int(sub_sign["is_egene"].sum())
+            rate = n_egene / n_total if n_total > 0 else np.nan
+            print(f"  {stratum_label}, {sign_label}: n={n_total}, eGenes={n_egene}, rate={rate*100:.1f}%")
+            factorial_rows.append({
+                "stratum": stratum_label,
+                "R_sign": sign_label,
+                "n": n_total,
+                "n_egene": n_egene,
+                "egene_rate": rate,
+            })
+
+    # Chi-squared test within high |R| stratum (key test from manuscript)
+    hi_pos = high_absR[high_absR["PearsonR"] > 0]
+    hi_neg = high_absR[high_absR["PearsonR"] < 0]
+    ct_hi = np.array([
+        [int((hi_pos["is_egene"] == 1).sum()), int((hi_pos["is_egene"] == 0).sum())],
+        [int((hi_neg["is_egene"] == 1).sum()), int((hi_neg["is_egene"] == 0).sum())],
+    ])
+    chi2_hi, p_hi, _, _ = stats.chi2_contingency(ct_hi)
+    print(f"\n  Chi-squared (High|R| stratum, R>0 vs R<0): chi2={chi2_hi:.3f}, p={p_hi:.3f}")
+
+    # Chi-squared test within low |R| stratum
+    lo_pos = low_absR[low_absR["PearsonR"] > 0]
+    lo_neg = low_absR[low_absR["PearsonR"] < 0]
+    ct_lo = np.array([
+        [int((lo_pos["is_egene"] == 1).sum()), int((lo_pos["is_egene"] == 0).sum())],
+        [int((lo_neg["is_egene"] == 1).sum()), int((lo_neg["is_egene"] == 0).sum())],
+    ])
+    chi2_lo, p_lo, _, _ = stats.chi2_contingency(ct_lo)
+    print(f"  Chi-squared (Low|R| stratum, R>0 vs R<0): chi2={chi2_lo:.3f}, p={p_lo:.3f}")
+
+    # Save factorial summary
+    factorial_df = pd.DataFrame(factorial_rows)
+    factorial_df["chi2_within_stratum"] = np.nan
+    factorial_df["chi2_pval_within_stratum"] = np.nan
+    for stratum, chi2, pval in [("High|R| (D10)", chi2_hi, p_hi), ("Low|R| (D1)", chi2_lo, p_lo)]:
+        mask = factorial_df["stratum"] == stratum
+        factorial_df.loc[mask, "chi2_within_stratum"] = chi2
+        factorial_df.loc[mask, "chi2_pval_within_stratum"] = pval
+    factorial_df.to_csv(FACTORIAL_OUT, index=False)
+    print(f"\n  Saved factorial summary: {FACTORIAL_OUT}")
+
+    # Define the 4 eGene groups for downstream analysis
+    hi_pos_eg = hi_pos[hi_pos["is_egene"] == 1].copy()
+    hi_neg_eg = hi_neg[hi_neg["is_egene"] == 1].copy()
+    lo_pos_eg = lo_pos[lo_pos["is_egene"] == 1].copy()
+    lo_neg_eg = lo_neg[lo_neg["is_egene"] == 1].copy()
+
+    print(f"\n  eGene group sizes:")
+    print(f"    High|R|, R>0 eGenes: n={len(hi_pos_eg)}")
+    print(f"    High|R|, R<0 eGenes: n={len(hi_neg_eg)}")
+    print(f"    Low|R|,  R>0 eGenes: n={len(lo_pos_eg)}")
+    print(f"    Low|R|,  R<0 eGenes: n={len(lo_neg_eg)}")
 
     # -----------------------------------------------------------------------
-    # 2. Expression statistics comparison
+    # Section 2: PrediXcan R across 4 gene categories (Figure 2B)
     # -----------------------------------------------------------------------
-    print_section("2. Expression Statistics (MeanObs, StdObs)")
+    print_section("2. PrediXcan R across 4 gene categories")
+    print("(Figure 2B: shows genotype-based model recovers direction where Enformer fails)")
 
-    for col in ["MeanObs", "StdObs"]:
-        if col not in df.columns:
-            continue
-        a_vals = class_a[col].dropna().values
-        b_vals = class_b[col].dropna().values
-        summarize(f"Class A {col}", a_vals)
-        summarize(f"Class B {col}", b_vals)
-        mw_test(a_vals, b_vals, f"Class A vs B {col}")
+    # Threshold for 'high |R|' vs 'low |R|' in non-eGene comparison:
+    # use median |R| across all genes as threshold
+    absR_median = df["abs_R"].median()
+    print(f"  Median |R| threshold: {absR_median:.4f}")
+
+    non_egenes = df[df["is_egene"] == 0]
+    egenes_all = df[df["is_egene"] == 1]
+
+    cat1 = non_egenes[non_egenes["abs_R"] <= absR_median]   # non-eGene, low |R|
+    cat2 = non_egenes[non_egenes["abs_R"] > absR_median]    # non-eGene, high |R|
+    cat3 = egenes_all[egenes_all["PearsonR"] < 0]            # eGene, R<0 (Enformer wrong direction)
+    cat4 = egenes_all[egenes_all["PearsonR"] > 0]            # eGene, R>0 (Enformer correct direction)
+
+    categories = [
+        ("Non-eGene, low|R|",  cat1),
+        ("Non-eGene, high|R|", cat2),
+        ("eGene, R<0 (Enformer wrong direction)",  cat3),
+        ("eGene, R>0 (Enformer correct direction)", cat4),
+    ]
+
+    pred_stats = []
+    for label, sub in categories:
+        if "PrediXcanR" in sub.columns:
+            pred = sub["PrediXcanR"].dropna().values
+        else:
+            pred = np.array([])
+        n_pred = len(pred)
+        mean_pred = np.mean(pred) if n_pred > 0 else np.nan
+        median_pred = np.median(pred) if n_pred > 0 else np.nan
+        sem_pred = stats.sem(pred) if n_pred > 1 else np.nan
+        print(f"\n  {label}:")
+        print(f"    n(with PrediXcanR)={n_pred}, mean={mean_pred:.4f}, "
+              f"median={median_pred:.4f}, SEM={sem_pred:.4f}")
+        pred_stats.append({
+            "category": label,
+            "n_genes": len(sub),
+            "n_with_PrediXcanR": n_pred,
+            "PrediXcanR_mean": mean_pred,
+            "PrediXcanR_median": median_pred,
+            "PrediXcanR_sem": sem_pred,
+        })
+
+    # Key contrast: eGene R<0 vs non-eGene low|R|
+    pred_cat3 = cat3["PrediXcanR"].dropna().values
+    pred_cat1 = cat1["PrediXcanR"].dropna().values
+    if len(pred_cat3) > 1 and len(pred_cat1) > 1:
         print()
+        mw_test(pred_cat3, pred_cat1, "eGene R<0 vs Non-eGene low|R| PrediXcanR")
+
+    # eGene R<0 vs eGene R>0
+    pred_cat4 = cat4["PrediXcanR"].dropna().values
+    if len(pred_cat3) > 1 and len(pred_cat4) > 1:
+        mw_test(pred_cat3, pred_cat4, "eGene R<0 vs eGene R>0 PrediXcanR")
 
     # -----------------------------------------------------------------------
-    # 3. Fine-tuning delta: PearsonRfineTuned - PearsonR
+    # Section 3: Fine-tuning stability (Figure 2A)
     # -----------------------------------------------------------------------
-    print_section("3. Fine-Tuning Delta (PearsonRfineTuned - PearsonR)")
+    print_section("3. Fine-tuning stability: FinetuneR by base R sign (eGenes only)")
 
     if "PearsonRfineTuned" in df.columns:
-        class_a["ft_delta"] = class_a["PearsonRfineTuned"] - class_a["PearsonR"]
-        class_b["ft_delta"] = class_b["PearsonRfineTuned"] - class_b["PearsonR"]
+        eg_rpos = egenes_all[egenes_all["PearsonR"] > 0]
+        eg_rneg = egenes_all[egenes_all["PearsonR"] < 0]
 
-        a_delta = class_a["ft_delta"].dropna().values
-        b_delta = class_b["ft_delta"].dropna().values
+        ft_rpos = eg_rpos["PearsonRfineTuned"].dropna().values
+        ft_rneg = eg_rneg["PearsonRfineTuned"].dropna().values
 
-        summarize("Class A fine-tuning delta", a_delta)
-        summarize("Class B fine-tuning delta", b_delta)
-        if len(a_delta) > 0 and len(b_delta) > 0:
-            mw_test(a_delta, b_delta, "Class A vs B fine-tuning delta")
-            d = cohend(a_delta, b_delta)
-            print(f"  Cohen's d (A - B): {d:.3f}")
+        summarize("eGene R>0: FinetuneR", ft_rpos)
+        summarize("eGene R<0: FinetuneR", ft_rneg)
+
+        if len(ft_rpos) > 1 and len(ft_rneg) > 1:
+            mw_pval = mw_test(ft_rpos, ft_rneg, "eGene R>0 vs R<0 FinetuneR")
+
+        # Key result: what fraction of R<0 eGenes remain negative after fine-tuning?
+        n_rneg_eg = len(eg_rneg)
+        n_still_neg = int((eg_rneg["PearsonRfineTuned"].dropna() < 0).sum())
+        pct_still_neg = n_still_neg / n_rneg_eg * 100 if n_rneg_eg > 0 else np.nan
+        print(f"\n  R<0 eGenes where FinetuneR also < 0: {n_still_neg}/{n_rneg_eg} = {pct_still_neg:.1f}%")
+
+        base_rpos = eg_rpos["PearsonR"].mean()
+        base_rneg = eg_rneg["PearsonR"].mean()
+        fine_rpos = np.mean(ft_rpos) if len(ft_rpos) > 0 else np.nan
+        fine_rneg = np.mean(ft_rneg) if len(ft_rneg) > 0 else np.nan
+        print(f"\n  Summary (mean values):")
+        print(f"    eGene R>0: base PearsonR={base_rpos:.4f}, FinetuneR={fine_rpos:.4f}")
+        print(f"    eGene R<0: base PearsonR={base_rneg:.4f}, FinetuneR={fine_rneg:.4f}")
     else:
-        print("  PearsonRfineTuned not available — skipping")
+        print("  PearsonRfineTuned column not available -- skipping")
 
     # -----------------------------------------------------------------------
-    # 4. Covariate-adjusted OLS: PrediXcanR ~ MeanObs_z + log10_gl_z + is_classB
+    # Section 4: Per-|R|-decile summary (sanity check)
     # -----------------------------------------------------------------------
-    print_section("4. Covariate-Adjusted OLS: PrediXcanR ~ covariates + is_classB")
-
-    ols_df = pd.concat([class_a, class_b], ignore_index=True).copy()
-    ols_df["is_classB"] = (ols_df["decile"] == 0).astype(int)
-
-    needed = ["PrediXcanR", "MeanObs", "log10_gene_length"]
-    ols_df = ols_df.dropna(subset=needed)
-    print(f"  OLS sample size (A+B eGenes with complete data): {len(ols_df)}")
-
-    if len(ols_df) >= 10:
-        ols_df["MeanObs_z"] = zscore(ols_df["MeanObs"])
-        ols_df["log10_gl_z"] = zscore(ols_df["log10_gene_length"])
-
-        X = sm.add_constant(ols_df[["MeanObs_z", "log10_gl_z", "is_classB"]])
-        y = ols_df["PrediXcanR"]
-
-        ols_model = sm.OLS(y, X).fit()
-        print(ols_model.summary())
-
-        coef = ols_model.params.get("is_classB", np.nan)
-        pval = ols_model.pvalues.get("is_classB", np.nan)
-        ci = ols_model.conf_int().loc["is_classB"] if "is_classB" in ols_model.params else [np.nan, np.nan]
-        print(f"\n  is_classB coef: {coef:.4f}, p={pval:.3e}, 95%CI [{ci[0]:.4f}, {ci[1]:.4f}]")
-    else:
-        print("  Too few observations for OLS — skipping")
-
-    # -----------------------------------------------------------------------
-    # 5. Decile eGene rates summary (for sanity check)
-    # -----------------------------------------------------------------------
-    print_section("5. Per-Decile eGene Rates (sanity check)")
+    print_section("4. Per-|R|-decile eGene rates (sanity check)")
     decile_rates = (
-        df.groupby("decile")
+        df.groupby("absR_decile")
         .agg(n=("is_egene", "count"), n_egene=("is_egene", "sum"))
         .assign(rate=lambda x: x["n_egene"] / x["n"] * 100)
     )
     print(decile_rates.to_string())
 
     # -----------------------------------------------------------------------
-    # Save class files
+    # Save eGene group files
     # -----------------------------------------------------------------------
-    class_a.to_csv(CLASSA_OUT, index=False)
-    class_b.to_csv(CLASSB_OUT, index=False)
-    print(f"\nSaved Class A eGenes ({len(class_a)} genes): {CLASSA_OUT}")
-    print(f"Saved Class B eGenes ({len(class_b)} genes): {CLASSB_OUT}")
+    hi_pos_eg.to_csv(HI_POS_OUT, index=False)
+    hi_neg_eg.to_csv(HI_NEG_OUT, index=False)
+    lo_pos_eg.to_csv(LO_POS_OUT, index=False)
+    lo_neg_eg.to_csv(LO_NEG_OUT, index=False)
+
+    print(f"\nSaved High|R|,R>0 eGenes ({len(hi_pos_eg)}): {HI_POS_OUT}")
+    print(f"Saved High|R|,R<0 eGenes ({len(hi_neg_eg)}): {HI_NEG_OUT}")
+    print(f"Saved Low|R|,R>0 eGenes ({len(lo_pos_eg)}): {LO_POS_OUT}")
+    print(f"Saved Low|R|,R<0 eGenes ({len(lo_neg_eg)}): {LO_NEG_OUT}")
     print("\nDone.")
 
 

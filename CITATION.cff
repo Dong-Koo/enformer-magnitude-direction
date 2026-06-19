@@ -10,12 +10,12 @@ authors:
     given-names: DongKoo
     email: ceo@nrootm.com
     affiliation: "Independent Researcher, Republic of Korea"
-    orcid: "https://orcid.org/[ORCID-to-be-assigned]"
+    orcid: "https://orcid.org/0009-0006-4538-1101"
 year: 2026
 journal: bioRxiv
-doi: "10.1101/XXXXXXXX"
-url: "https://doi.org/10.1101/XXXXXXXX"
-repository-code: "https://github.com/[username]/eqtl-enformer-magnitude-direction"
+doi: "10.5281/zenodo.20754856"
+url: "https://github.com/Dong-Koo/enformer-magnitude-direction"
+repository-code: "https://github.com/Dong-Koo/enformer-magnitude-direction"
 license: MIT
 keywords:
   - Enformer
@@ -36,5 +36,6 @@ abstract: >-
   AIC=104), but prediction direction for eGenes is near-random (54.0% correct;
   max D10=62.5%). Direction errors are irreversible by fine-tuning on ROSMAP
   (Mann-Whitney p~10^-100), yet PrediXcan recovers correct direction for R<0
-  eGenes (PrediXcanR=0.295), implicating Enformer's non-brain ENCODE training
-  corpus as the mechanistic source of directional failure.
+  eGenes (PrediXcanR=0.295), consistent with the hypothesis that Enformer's
+  non-brain ENCODE training corpus lacks the brain-specific regulatory programs
+  needed to correctly orient directional effects.

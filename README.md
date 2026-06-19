@@ -6,7 +6,7 @@
 [![Zenodo](https://img.shields.io/badge/Zenodo-DOI%3A10.5281%2Fzenodo.20754856-blue)](https://doi.org/10.5281/zenodo.20754856)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](docs/LICENSE)
 
-**Author:** DongKoo Lee — Independent Researcher, Gwangju-si, Republic of Korea — ceo@nrootm.com — ORCID: [to be assigned]
+**Author:** DongKoo Lee — Independent Researcher, Gwangju-si, Republic of Korea — ceo@nrootm.com — ORCID: 0009-0006-4538-1101
 
 ---
 
@@ -31,7 +31,7 @@ We cross-reference Enformer's individual-level per-gene Pearson R (Sasse et al. 
 ## Quick start
 
 ```bash
-git clone https://github.com/[username]/eqtl-enformer-magnitude-direction
+git clone https://github.com/Dong-Koo/enformer-magnitude-direction
 cd eqtl-enformer-magnitude-direction
 pip install -r code/requirements.txt
 python code/01_download_data.py
