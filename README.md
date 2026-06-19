@@ -3,7 +3,7 @@
 **A Magnitude–Direction Dissociation in Individual-Level Expression Prediction**
 
 [![bioRxiv](https://img.shields.io/badge/bioRxiv-10.1101%2FXXXXXXXX-b31b1b)](https://doi.org/10.1101/XXXXXXXX)
-[![Zenodo](https://img.shields.io/badge/Zenodo-DOI%3A10.5281%2Fzenodo.XXXXXXX-blue)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![Zenodo](https://img.shields.io/badge/Zenodo-DOI%3A10.5281%2Fzenodo.20754856-blue)](https://doi.org/10.5281/zenodo.20754856)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](docs/LICENSE)
 
 **Author:** DongKoo Lee — Independent Researcher, Gwangju-si, Republic of Korea — ceo@nrootm.com — ORCID: [to be assigned]

@@ -27,7 +27,7 @@ genotype but inaccessible to sequence-based prediction—consistent with trainin
 (ENCODE cell lines vs. DLPFC neurons).
 
 Preprint: [bioRxiv DOI]  
-Code + processed data: [GitHub URL] · [Zenodo DOI]
+Code + processed data: https://github.com/Dong-Koo/enformer-magnitude-direction · 10.5281/zenodo.20754856
 
 I would be very grateful for any feedback, particularly on whether the tissue mismatch
 interpretation (K562/GM12878 vs. DLPFC) is consistent with your observations during the

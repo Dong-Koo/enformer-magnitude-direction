@@ -61,11 +61,11 @@ Steps in order. Each step depends on the previous.
 
 2. **GitHub** — Create a public repository (suggested name: `eqtl-enformer-magnitude-direction`). Upload all files from this package. Ensure the top-level `README.md`, `CITATION.cff`, and `.zenodo.json` are present at the repo root.
 
-3. **Zenodo** — Connect Zenodo to your GitHub account (zenodo.org → Settings → GitHub). Enable the new repository. Create a GitHub release (e.g., `v1.0.0`). Zenodo auto-imports `.zenodo.json` and mints a DOI. Fill all `[Zenodo DOI]` placeholders.
+3. **Zenodo** — Connect Zenodo to your GitHub account (zenodo.org → Settings → GitHub). Enable the new repository. Create a GitHub release (e.g., `v1.0.0`). Zenodo auto-imports `.zenodo.json` and mints a DOI. Fill all `10.5281/zenodo.20754856` placeholders.
 
 4. **bioRxiv** — Upload `manuscript/manuscript.html` (printed to PDF) at [biorxiv.org/submit](https://www.biorxiv.org/submit). Fill metadata (title, abstract, author, subject: Genomics). bioRxiv assigns a DOI within ~24 hours. Fill all `[bioRxiv DOI]` placeholders.
 
-5. **Update manuscript** — Replace all placeholder strings (`[GitHub URL]`, `[Zenodo DOI]`, `[bioRxiv DOI]`, `[ORCID]`) in the manuscript and docs files. See `SUBMISSION_CHECKLIST.md` for the complete list of files to update.
+5. **Update manuscript** — Replace all placeholder strings (`https://github.com/Dong-Koo/enformer-magnitude-direction`, `10.5281/zenodo.20754856`, `[bioRxiv DOI]`, `[ORCID]`) in the manuscript and docs files. See `SUBMISSION_CHECKLIST.md` for the complete list of files to update.
 
 6. **Researcher emails** — Send outreach emails using templates in `researcher_email.md`. Send only after the bioRxiv DOI is live and confirmed. Priority order: Mostafavi Lab → Enformer/Borzoi team → PrediXcan/GTEx researchers.
 

@@ -47,7 +47,7 @@ Work through these steps in order. Each step's output feeds into the next.
 
 - [ ] **Copy GitHub URL** — Format: `https://github.com/[your-username]/eqtl-enformer-magnitude-direction`
 
-- [ ] **Fill GitHub URL placeholder** — Replace `[GitHub URL]` and `[username]` in:
+- [ ] **Fill GitHub URL placeholder** — Replace `https://github.com/Dong-Koo/enformer-magnitude-direction` and `[username]` in:
   - `README.md` (Quick start clone URL, citation block)
   - `CITATION.cff` (field: `repository-code`)
   - `docs/DATA_AVAILABILITY.md` (data statement paragraph)
@@ -64,9 +64,9 @@ Work through these steps in order. Each step's output feeds into the next.
 
 - [ ] **Create a GitHub release** — On GitHub: Releases → Draft a new release → Tag: `v1.0.0` → Title: `v1.0.0 — initial release` → Publish release. Zenodo automatically imports `.zenodo.json` and mints a DOI.
 
-- [ ] **Confirm Zenodo DOI** — Visit your Zenodo record and copy the DOI (format: `10.5281/zenodo.XXXXXXX`).
+- [ ] **Confirm Zenodo DOI** — Visit your Zenodo record and copy the DOI (format: `10.5281/10.5281/zenodo.20754856`).
 
-- [ ] **Fill Zenodo DOI placeholder** — Replace `[Zenodo DOI]` and badge URL in:
+- [ ] **Fill Zenodo DOI placeholder** — Replace `10.5281/zenodo.20754856` and badge URL in:
   - `README.md` (badge + data availability table)
   - `docs/DATA_AVAILABILITY.md` (data statement paragraph)
   - `docs/cover_letter.md` (reproducibility paragraph)
@@ -121,7 +121,7 @@ Send only after the bioRxiv DOI is live and confirmed accessible.
 
 ## Phase 6: Journal submission
 
-- [ ] **Final manuscript check** — Confirm all placeholders (`[GitHub URL]`, `[Zenodo DOI]`, `[bioRxiv DOI]`, `[ORCID]`) are replaced in the PDF. Confirm figure files are embedded.
+- [ ] **Final manuscript check** — Confirm all placeholders (`https://github.com/Dong-Koo/enformer-magnitude-direction`, `10.5281/zenodo.20754856`, `[bioRxiv DOI]`, `[ORCID]`) are replaced in the PDF. Confirm figure files are embedded.
 
 - [ ] **Bioinformatics Advances** (1st choice, Oxford Academic)
   - Submission portal: [academic.oup.com/bioinformaticsadvances/pages/submission-guidelines](https://academic.oup.com/bioinformaticsadvances/pages/submission-guidelines)
@@ -147,11 +147,11 @@ See `docs/cover_letter.md` for full rationale, reviewer suggestions, and reviewe
 | Placeholder | Replace with | Files |
 |-------------|-------------|-------|
 | `[ORCID-to-be-assigned]` / `[ORCID]` | Your 16-digit ORCID iD | CITATION.cff, .zenodo.json, cover_letter.md, researcher_email.md, manuscript.html |
-| `[username]` / `[GitHub URL]` | Your GitHub repo URL | README.md, CITATION.cff, DATA_AVAILABILITY.md, researcher_email.md, manuscript.html |
-| `[Zenodo DOI]` | `10.5281/zenodo.XXXXXXX` | README.md, DATA_AVAILABILITY.md, cover_letter.md, researcher_email.md, manuscript.html |
+| `[username]` / `https://github.com/Dong-Koo/enformer-magnitude-direction` | Your GitHub repo URL | README.md, CITATION.cff, DATA_AVAILABILITY.md, researcher_email.md, manuscript.html |
+| `10.5281/zenodo.20754856` | `10.5281/10.5281/zenodo.20754856` | README.md, DATA_AVAILABILITY.md, cover_letter.md, researcher_email.md, manuscript.html |
 | `[bioRxiv DOI]` | `10.1101/XXXXXXXX` | README.md, CITATION.cff, cover_letter.md, researcher_email.md, manuscript.html |
 | `10.1101/XXXXXXXX` (in README badge) | Actual DOI digits | README.md badge URLs |
-| `zenodo.XXXXXXX` (in README badge) | Actual Zenodo record number | README.md badge URLs |
+| `10.5281/zenodo.20754856` (in README badge) | Actual Zenodo record number | README.md badge URLs |
 
 ---
 

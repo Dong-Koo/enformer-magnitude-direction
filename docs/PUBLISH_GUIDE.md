@@ -99,7 +99,7 @@ gh repo create enformer-magnitude-direction \
 | Description | First public release accompanying the bioRxiv preprint. Contains manuscript, analysis code, processed data, and figures. |
 
 3. "Publish release" 클릭  
-→ Zenodo에서 자동으로 DOI 발급: `10.5281/zenodo.XXXXXXX`
+→ Zenodo에서 자동으로 DOI 발급: `10.5281/zenodo.20754856`
 
 ### Zenodo 메타데이터 확인
 
@@ -175,7 +175,7 @@ DLPFC neurons.
 
 8. **Subject area:** Genomics  
    **Related links:**
-   - GitHub: `https://github.com/[username]/enformer-magnitude-direction`
+   - GitHub: `https://github.com/Dong-Koo/enformer-magnitude-direction`
    - Zenodo: `https://zenodo.org/record/XXXXXXX`
 
 9. "Submit" → 약 24-48시간 후 DOI 발급: `10.1101/XXXXXX.XXXXX`
@@ -189,8 +189,8 @@ bioRxiv DOI, Zenodo DOI, ORCID, GitHub URL 발급 후 아래 명령어로 일괄
 ```bash
 cd /Users/dongkoo/work/KnowledgeWork/eqtl_enformer_ushape
 
-GITHUB_URL="https://github.com/[username]/enformer-magnitude-direction"
-ZENODO_DOI="10.5281/zenodo.XXXXXXX"
+GITHUB_URL="https://github.com/Dong-Koo/enformer-magnitude-direction"
+ZENODO_DOI="10.5281/zenodo.20754856"
 BIORXIV_DOI="10.1101/XXXXXX.XXXXX"
 ORCID="0000-0000-0000-XXXX"
 
