@@ -37,7 +37,7 @@ EnformerAssessment data.
 Best regards,  
 DongKoo Lee  
 Independent Researcher, Republic of Korea  
-ORCID: [ORCID] · ceo@nrootm.com
+ORCID: 0009-0006-4538-1101 · ceo@nrootm.com
 
 ---
 
@@ -70,7 +70,7 @@ model's known limitations, and whether any internal analyses have addressed dire
 for tissue-specific eQTL genes.
 
 Best regards,  
-DongKoo Lee · ceo@nrootm.com · ORCID: [ORCID]
+DongKoo Lee · ceo@nrootm.com · ORCID: 0009-0006-4538-1101
 
 ---
 
