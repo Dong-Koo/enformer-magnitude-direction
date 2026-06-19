@@ -1,0 +1,5 @@
+model,n_params,AIC,BIC,delta_AIC
+M1: R + R2 + covariates (U-shape),6,8377.8,8418.7,103.7
+M2: |R| + covariates (magnitude),5,8274.1,8308.3,0.0
+M3: |R| + R + covariates,6,8275.7,8316.6,1.6
+M4: |R| + R + R2 + covariates (full),7,8277.1,8324.9,3.0
