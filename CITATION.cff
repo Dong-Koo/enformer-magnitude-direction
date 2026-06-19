@@ -31,7 +31,7 @@ abstract: >-
   We cross-reference Enformer's individual-level per-gene Pearson R (Sasse et
   al. 2023, Nature Genetics, ROSMAP cohort n=839) with GTEx v8 Brain Cortex
   eGenes (n=9,082) across 6,808 genes, and report a fundamental dissociation:
-  prediction magnitude (|R|) monotonically predicts cis-eQTL gene identity
+  prediction magnitude (|R|) strongly predicts cis-eQTL gene identity
   (eGene rate 31.6% to 82.5%; |R| model AIC=8274 vs R+R2 AIC=8378, delta
   AIC=104), but prediction direction for eGenes is near-random (54.0% correct;
   max D10=62.5%). Direction errors are irreversible by fine-tuning on ROSMAP

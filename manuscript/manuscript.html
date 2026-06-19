@@ -62,14 +62,14 @@
 Enformer, a sequence-to-expression deep learning model, predicts gene expression from 196 kb DNA sequence and has been benchmarked for individual-level prediction in the ROSMAP cohort (839 individuals, DLPFC bulk RNA-seq). A fundamental question remains unresolved: does Enformer's individual-level performance reflect its ability to capture cis-regulatory variation, and if so, does it correctly predict the <em>direction</em> of genetic effects?
 </p>
 <p>
-We cross-referenced per-gene Pearson R correlations from the Enformer benchmark (Sasse et al. 2023, <em>Nature Genetics</em>) with GTEx v8 Brain Cortex eGenes (n = 9,082; 205 individuals) across 6,808 autosomal genes. We find a striking <strong>magnitude–direction dissociation</strong>: Enformer's prediction magnitude (|R|) is a strong, monotone predictor of cis-eQTL gene identity (eGene rate: 31.6% in the lowest |R| decile → 82.5% in the highest; logistic |R| model AIC = 8,274 vs. R+R² model AIC = 8,378, ΔAIC = 104), yet the <em>direction</em> of Enformer's individual predictions for eGenes is near-random (54.0% R &gt; 0; binomial p = 3.6×10⁻⁵ against 50%, maximum D10 = 62.5%). A 2×2 factorial analysis confirms that within any |R| stratum, genes with R &gt; 0 and R &lt; 0 have statistically identical eGene rates (high-|R| stratum: 50.6% vs. 51.6%; χ² p = 0.571). The direction error is irreversible: R &lt; 0 eGenes retain negative fine-tuned correlations after ROSMAP fine-tuning (mean FinetuneR = −0.035 vs. +0.063 for R &gt; 0 eGenes; Mann–Whitney p ≈ 10⁻¹⁰⁰). In contrast, PrediXcan—a genotype-based linear model—correctly assigns positive predicted expression to R &lt; 0 eGenes (PrediXcanR = 0.295), confirming that the directional information is accessible from genotype data but inaccessible to Enformer. We propose that the direction failure is most parsimoniously explained by training-tissue mismatch: Enformer was trained on ENCODE cell line data (K562, GM12878), in which cis-regulatory allelic effects at brain-specific enhancers may be absent, inverted, or absent relative to their effects in DLPFC neurons. This interpretation remains a hypothesis; experimental validation would require Enformer variants trained with and without brain-tissue–specific chromatin tracks. These results show that Enformer effectively identifies cis-regulated genes by prediction magnitude but cannot be used as-is to infer the sign of individual genetic effects on brain expression.
+We cross-referenced per-gene Pearson R correlations from the Enformer benchmark (Sasse et al. 2023, <em>Nature Genetics</em>) with GTEx v8 Brain Cortex eGenes (n = 9,082; 205 individuals) across 6,808 autosomal genes. We find a striking <strong>magnitude–direction dissociation</strong>: Enformer's prediction magnitude (|R|) is a strong predictor of cis-eQTL gene identity (eGene rate: 31.6% in the lowest |R| decile → 82.5% in the highest; logistic |R| model AIC = 8,274 vs. R+R² model AIC = 8,378, ΔAIC = 104), yet the <em>direction</em> of Enformer's individual predictions for eGenes is near-random (54.0% R &gt; 0; binomial p = 3.6×10⁻⁵ against 50%, maximum D10 = 62.5%). A 2×2 factorial analysis confirms that within any |R| stratum, genes with R &gt; 0 and R &lt; 0 have statistically identical eGene rates (high-|R| stratum: 50.6% vs. 51.6%; χ² p = 0.571). The direction error is irreversible: R &lt; 0 eGenes retain negative fine-tuned correlations after ROSMAP fine-tuning (mean FinetuneR = −0.035 vs. +0.063 for R &gt; 0 eGenes; Mann–Whitney p ≈ 10⁻¹⁰⁰). In contrast, PrediXcan—a genotype-based linear model—correctly assigns positive predicted expression to R &lt; 0 eGenes (PrediXcanR = 0.295), confirming that the directional information is accessible from genotype data but inaccessible to Enformer. We propose that the direction failure is most parsimoniously explained by training-tissue mismatch: Enformer was trained on ENCODE cell line data (K562, GM12878), in which cis-regulatory allelic effects at brain-specific enhancers may be absent, inverted, or absent relative to their effects in DLPFC neurons. This interpretation remains a hypothesis; experimental validation would require Enformer variants trained with and without brain-tissue–specific chromatin tracks. These results show that Enformer effectively identifies cis-regulated genes by prediction magnitude but cannot be used as-is to infer the sign of individual genetic effects on brain expression.
 </p>
 </div>
 
 <div class="key-findings">
 <strong>Key empirical findings (all verified from publicly available data):</strong>
 <ul>
-  <li>eGene rate is <em>monotone</em> in |R| (D1 = 31.6% → D10 = 82.5%); not in R sign</li>
+  <li>eGene rate rises strongly with |R| (D1 = 31.6% → D10 = 82.5%); not with R sign</li>
   <li>2×2 factorial: same |R| level, R&gt;0 vs R&lt;0: p = 0.571 (no difference)</li>
   <li>|R| model AIC = 8,274 beats R+R² model AIC = 8,378 (ΔAIC = 104)</li>
   <li>Direction accuracy for eGenes: 54.0% (D10 maximum: 62.5%)</li>
@@ -94,7 +94,7 @@ One natural expectation is that cis-eQTL genes (eGenes)—genes whose expression
 </p>
 
 <p>
-Here we report a critical reanalysis showing that this U-shaped pattern is entirely explained by a confound: the absolute value of R (|R|, prediction magnitude), not R sign, is the monotone predictor of eGene status. Within any |R| stratum, genes with positive and negative R have indistinguishable eGene rates. This finding reveals a more precise and more surprising relationship: Enformer detects which genes are cis-regulated via prediction magnitude, but systematically fails to predict the <em>direction</em> of the individual-level effect for approximately half of eGenes (46%). We characterize this <strong>magnitude–direction dissociation</strong>, demonstrate its irreversibility under fine-tuning, and propose training-tissue mismatch as the mechanistic explanation.
+Here we report a critical reanalysis showing that this U-shaped pattern is entirely explained by a confound: the absolute value of R (|R|, prediction magnitude), not R sign, is the dominant predictor of eGene status. Within any |R| stratum, genes with positive and negative R have indistinguishable eGene rates. This finding reveals a more precise and more surprising relationship: Enformer detects which genes are cis-regulated via prediction magnitude, but systematically fails to predict the <em>direction</em> of the individual-level effect for approximately half of eGenes (46%). We characterize this <strong>magnitude–direction dissociation</strong>, demonstrate its irreversibility under fine-tuning, and propose training-tissue mismatch as the mechanistic explanation.
 </p>
 
 <h2>2. Methods</h2>
@@ -166,7 +166,7 @@ When genes are ranked by Pearson R and divided into deciles, eGene rates show an
 </p>
 
 <p>
-The U-shape disappears when genes are instead ranked by |R|: eGene rate increases monotonically from 31.6% (95% CI: 28.1–35.3%) in D1 (lowest |R|) to 82.5% (95% CI: 79.4–85.4%) in D10 (highest |R|) (Figure 1A). Logistic regression confirms this formally: the |R| model fits significantly better than the R + R² (U-shape) model (|R| model AIC = 8,274; R+R² model AIC = 8,378; ΔAIC = 104). Adding |R| to the R+R² model renders both the R term (Wald p = 0.509) and the R² term (Wald p = 0.448) non-significant. There is no residual U-shape signal beyond what magnitude explains.
+The U-shape disappears when genes are instead ranked by |R|: eGene rate rises from 31.6% (95% CI: 28.1–35.3%) in D1 (lowest |R|) to 82.5% (95% CI: 79.4–85.4%) in D10 (highest |R|), with particularly strong enrichment in the upper deciles (Figure 1A). Logistic regression confirms this formally: the |R| model fits significantly better than the R + R² (U-shape) model (|R| model AIC = 8,274; R+R² model AIC = 8,378; ΔAIC = 104). Adding |R| to the R+R² model renders both the R term (Wald p = 0.509) and the R² term (Wald p = 0.448) non-significant. There is no residual U-shape signal beyond what magnitude explains.
 </p>
 
 <p>
@@ -177,7 +177,7 @@ A 2×2 factorial analysis provides the cleanest test (Figure 1B): genes stratifi
   <img src="figures/fig1_magnitude_direction.png" alt="Figure 1: Magnitude–direction dissociation in eGene prediction">
   <figcaption>
     <strong>Figure 1. eGene rate is predicted by Enformer magnitude (|R|), not direction.</strong>
-    (A) When genes are ranked by |Pearson R| and divided into deciles, the Brain Cortex eGene rate increases monotonically from 31.6% (D1) to 82.5% (D10). Gradient coloring indicates increasing |R|. Error bars = bootstrap 95% CI (N = 2,000). Dashed line = overall eGene rate.
+    (A) When genes are ranked by |Pearson R| and divided into deciles, the Brain Cortex eGene rate increases strongly from 31.6% (D1) to 82.5% (D10). Gradient coloring indicates increasing |R|. Error bars = bootstrap 95% CI (N = 2,000). Dashed line = overall eGene rate.
     (B) A 2×2 factorial analysis shows that within the same |R| stratum, genes with R &gt; 0 and R &lt; 0 have statistically identical eGene rates (high-|R|: 50.6% vs. 51.6%; χ² p = 0.571). Direction is irrelevant to eGene status once magnitude is matched.
     (C) Within eGenes, the fraction with R &gt; 0 ("direction accuracy") is near-random across |R| deciles (≈50–55%), only modestly exceeding chance at the highest |R| decile (D10 = 62.5%, p &lt; 0.001). Error bars = bootstrap 95% CI.
   </figcaption>
@@ -186,7 +186,7 @@ A 2×2 factorial analysis provides the cleanest test (Figure 1B): genes stratifi
 <h3>3.2 Enformer prediction magnitude detects cis-eQTL gene identity</h3>
 
 <p>
-The monotone relationship between |R| and eGene rate (Figure 1A) establishes that Enformer's prediction magnitude—how strongly its prediction correlates with individual differences in observed expression, regardless of direction—is a genuine detector of cis-regulated gene identity. Logistic regression quantifies this: the |R| coefficient in the magnitude model is highly significant (p = 6×10⁻¹²⁴; odds ratio per unit |R| increase ≈ 8.3). The Enformer prediction spread (StdEnf)—the between-individual variance in Enformer's predicted expression—is also significantly elevated for eGenes vs. non-eGenes (Mann–Whitney p = 1.8×10⁻⁵), consistent with the model capturing some signal about which genes are subject to genetic regulation.
+The strong positive relationship between |R| and eGene rate (Figure 1A) establishes that Enformer's prediction magnitude—how strongly its prediction correlates with individual differences in observed expression, regardless of direction—is a genuine detector of cis-regulated gene identity. Logistic regression quantifies this: the |R| coefficient in the magnitude model is highly significant (p = 6×10⁻¹²⁴; odds ratio per unit |R| increase ≈ 8.3). The Enformer prediction spread (StdEnf)—the between-individual variance in Enformer's predicted expression—is also significantly elevated for eGenes vs. non-eGenes (Mann–Whitney p = 1.8×10⁻⁵), consistent with the model capturing some signal about which genes are subject to genetic regulation.
 </p>
 
 <p>
@@ -259,7 +259,7 @@ PrediXcan R is nearly identical for eGenes with R &lt; 0 (0.295) and eGenes with
   </tr>
   <tr>
     <td>Predicts eGene identity?</td>
-    <td>Yes (p = 6×10⁻¹²⁴; monotone)</td>
+    <td>Yes (p = 6×10⁻¹²⁴; strong gradient)</td>
     <td>No (p = 0.571 within |R| stratum)</td>
   </tr>
   <tr>
@@ -302,7 +302,7 @@ The central finding of this study is a clean empirical dissociation: Enformer's 
 </p>
 
 <p>
-This finding resolves the previously puzzling apparent U-shape in eGene enrichment across Enformer performance deciles. When genes are ranked by |R| rather than R, the U-shape vanishes and is replaced by a clean monotone gradient. The R decile U-shape was an artifact: the D1 tail of R contains high-|R| genes with inverted direction, and the D10 tail contains high-|R| genes with correct direction. Both tails are enriched for eGenes precisely because both have high |R|.
+This finding resolves the previously puzzling apparent U-shape in eGene enrichment across Enformer performance deciles. When genes are ranked by |R| rather than R, the U-shape vanishes and is replaced by a strong positive gradient. The R decile U-shape was an artifact: the D1 tail of R contains high-|R| genes with inverted direction, and the D10 tail contains high-|R| genes with correct direction. Both tails are enriched for eGenes precisely because both have high |R|.
 </p>
 
 <h3>4.2 Mechanism: training-tissue mismatch</h3>
@@ -330,7 +330,7 @@ The magnitude–direction dissociation has direct practical implications:
 </p>
 
 <p>
-<strong>What Enformer can do:</strong> Identify which genes are subject to cis-regulatory variation. High |R| genes are likely eGenes; this could prioritize genes for eQTL testing, fine-mapping, or regulatory dissection. The monotone |R|–eGene relationship is a non-trivial signal despite direction failure.
+<strong>What Enformer can do:</strong> Identify which genes are subject to cis-regulatory variation. High |R| genes are likely eGenes; this could prioritize genes for eQTL testing, fine-mapping, or regulatory dissection. The strong |R|–eGene relationship is a non-trivial signal despite direction failure.
 </p>
 
 <p>
@@ -350,7 +350,7 @@ We use GTEx Brain Cortex eGenes (n = 205 individuals) as the reference, while th
 <h2>5. Conclusions</h2>
 
 <p>
-We identified a magnitude–direction dissociation in Enformer's individual-level expression predictions: prediction magnitude (|R|) reliably identifies cis-eQTL genes with a monotone gradient from 31.6% to 82.5% across |R| deciles, but prediction direction is near-random for eGenes (54.0% correct), irreversible by fine-tuning, and outperformed by a simple genotype-based linear model (PrediXcan). We propose that this dissociation is most parsimoniously explained by training-tissue mismatch: Enformer's ENCODE cell-line training corpus likely lacks the brain-specific regulatory information needed to correctly orient individual-level effects in DLPFC, though formal experimental validation of this mechanism remains a priority for future work. These findings define what Enformer can and cannot be used for in brain genomics, provide a concrete target for next-generation model development, and demonstrate that the benchmark metric (R) can obscure a fundamental directional failure invisible in averaged metrics.
+We identified a magnitude–direction dissociation in Enformer's individual-level expression predictions: prediction magnitude (|R|) reliably identifies cis-eQTL genes, with eGene rates rising from 31.6% to 82.5% across |R| deciles, but prediction direction is near-random for eGenes (54.0% correct), irreversible by fine-tuning, and outperformed by a simple genotype-based linear model (PrediXcan). We propose that this dissociation is most parsimoniously explained by training-tissue mismatch: Enformer's ENCODE cell-line training corpus likely lacks the brain-specific regulatory information needed to correctly orient individual-level effects in DLPFC, though formal experimental validation of this mechanism remains a priority for future work. These findings define what Enformer can and cannot be used for in brain genomics, provide a concrete target for next-generation model development, and demonstrate that the benchmark metric (R) can obscure a fundamental directional failure invisible in averaged metrics.
 </p>
 
 <h2>Acknowledgments</h2>
