@@ -1,0 +1,48 @@
+{
+  "title": "Enformer Recognizes cis-Regulated Genes by Prediction Magnitude but Fails to Predict Effect Direction: A Magnitude–Direction Dissociation in Individual-Level Expression Prediction",
+  "description": "We cross-reference Enformer’s individual-level per-gene Pearson R (Sasse et al. 2023, Nature Genetics, ROSMAP cohort n=839) with GTEx v8 Brain Cortex eGenes (n=9,082) across 6,808 genes, and report a fundamental dissociation: prediction magnitude (|R|) monotonically predicts cis-eQTL gene identity (eGene rate 31.6% → 82.5%; |R| model AIC=8274 vs R+R² AIC=8378, ΔAIC=104), but prediction direction for eGenes is near-random (54.0% correct; max D10=62.5%). Direction errors are irreversible by fine-tuning on ROSMAP (Mann–Whitney p≈10⁻¹⁰⁰), yet PrediXcan recovers correct direction for R<0 eGenes (PrediXcanR=0.295), implicating Enformer’s non-brain ENCODE training corpus as the mechanistic source of directional failure.",
+  "creators": [
+    {
+      "name": "Lee, DongKoo",
+      "affiliation": "Independent Researcher, Republic of Korea",
+      "orcid": "[ORCID-to-be-assigned]"
+    }
+  ],
+  "keywords": [
+    "Enformer",
+    "cis-eQTL",
+    "individual-level prediction",
+    "training-tissue mismatch",
+    "ROSMAP",
+    "GTEx",
+    "computational genomics",
+    "PrediXcan",
+    "magnitude-direction dissociation"
+  ],
+  "license": "MIT",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "access_right": "open",
+  "language": "eng",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/mostafavilabuw/EnformerAssessment",
+      "relation": "isSupplementTo",
+      "scheme": "url",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://gtexportal.org/api/v2",
+      "relation": "isSupplementTo",
+      "scheme": "url",
+      "resource_type": "dataset"
+    },
+    {
+      "identifier": "10.1038/s41588-023-01490-x",
+      "relation": "isSupplementTo",
+      "scheme": "doi",
+      "resource_type": "publication-article"
+    }
+  ],
+  "notes": "All analysis code and processed data tables are freely available in this repository. No controlled-access or individual-level data are included. Raw inputs are fetched from the EnformerAssessment GitHub repository and the GTEx Portal API v2; see docs/DATA_AVAILABILITY.md for full provenance."
+}

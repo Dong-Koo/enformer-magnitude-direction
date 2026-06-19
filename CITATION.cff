@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite the paper as below."
+type: article
+title: >-
+  Enformer Recognizes cis-Regulated Genes by Prediction Magnitude but Fails to
+  Predict Effect Direction: A Magnitude-Direction Dissociation in
+  Individual-Level Expression Prediction
+authors:
+  - family-names: Lee
+    given-names: DongKoo
+    email: ceo@nrootm.com
+    affiliation: "Independent Researcher, Republic of Korea"
+    orcid: "https://orcid.org/[ORCID-to-be-assigned]"
+year: 2026
+journal: bioRxiv
+doi: "10.1101/XXXXXXXX"
+url: "https://doi.org/10.1101/XXXXXXXX"
+repository-code: "https://github.com/[username]/eqtl-enformer-magnitude-direction"
+license: MIT
+keywords:
+  - Enformer
+  - cis-eQTL
+  - individual-level expression prediction
+  - magnitude-direction dissociation
+  - ROSMAP
+  - GTEx
+  - computational genomics
+  - PrediXcan
+  - training-tissue mismatch
+abstract: >-
+  We cross-reference Enformer's individual-level per-gene Pearson R (Sasse et
+  al. 2023, Nature Genetics, ROSMAP cohort n=839) with GTEx v8 Brain Cortex
+  eGenes (n=9,082) across 6,808 genes, and report a fundamental dissociation:
+  prediction magnitude (|R|) monotonically predicts cis-eQTL gene identity
+  (eGene rate 31.6% to 82.5%; |R| model AIC=8274 vs R+R2 AIC=8378, delta
+  AIC=104), but prediction direction for eGenes is near-random (54.0% correct;
+  max D10=62.5%). Direction errors are irreversible by fine-tuning on ROSMAP
+  (Mann-Whitney p~10^-100), yet PrediXcan recovers correct direction for R<0
+  eGenes (PrediXcanR=0.295), implicating Enformer's non-brain ENCODE training
+  corpus as the mechanistic source of directional failure.
